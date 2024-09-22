@@ -67,7 +67,9 @@ runs:
       uses: actions/checkout@v4.1.7
       with:
         repository: KhrySystem/VkBootstrap3
+        submodules: recursive
         path: ${{inputs.clone-dir}}
+        clean: false
 
     - name: Build VkBootstrap
       shell: bash
