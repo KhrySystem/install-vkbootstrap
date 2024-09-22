@@ -24,12 +24,12 @@ on:
 
       clone-dir:
         required: false
-        default: 'vkbootstrap'
+        default: '../vkbootstrap'
         description: 'Relative path under $GITHUB_WORKSPACE to place the repository'
 
       build-dir:
         required: false
-        default: 'vkbootstrap/build'
+        default: '../vkbootstrap/build'
         description: 'Relative path under $GITHUB_WORKSPACE to build the repository'
 
       install-dir:
