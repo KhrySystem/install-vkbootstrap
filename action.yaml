@@ -24,18 +24,18 @@ on:
 
       clone-dir:
         required: false
-        default: ${{github.workspace}}/vkbootstrap
-        description: The directory to lone VkBootstrap into.
+        default: 'vkbootstrap'
+        description: 'Relative path under $GITHUB_WORKSPACE to place the repository'
 
       build-dir:
         required: false
-        default: ${{github.workspace}}/vkbootstrap/build
-        description: The directory to build VkBootstrap into.
+        default: 'vkbootstrap/build'
+        description: 'Relative path under $GITHUB_WORKSPACE to build the repository'
 
       install-dir:
         required: false
-        default: ${{github.workspace}}/install
-        description: The directory to install VkBootstrap into.
+        default: 'install'
+        description: 'Relative path under $GITHUB_WORKSPACE to install the repository'
 
 runs:
   using: 'composite'
@@ -72,6 +72,6 @@ runs:
     - name: Build VkBootstrap
       shell: bash
       run: |
-        cmake -S ${{inputs.clone-dir}} -B ${{inputs.build-dir}} -DVKB_BUILD_TOOLS:BOOL=ON -DVKB_BUILD_EXAMPLES:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=${{inputs.install-dir}} -DBUILD_SHARED_LIBS:BOOL=TRUE
-        cmake --build ${{inputs.build-dir}} --target install --config Release 
+        cmake -S ${{github.workspace}}/${{inputs.clone-dir}} -B ${{github.workspace}}/${{inputs.build-dir}} -DVKB_BUILD_TOOLS:BOOL=ON -DVKB_BUILD_EXAMPLES:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=${{github.workspace}}/${{inputs.install-dir}} -DBUILD_SHARED_LIBS:BOOL=TRUE
+        cmake --build ${{github.workspace}}/${{inputs.build-dir}} --target install --config Release 
 
