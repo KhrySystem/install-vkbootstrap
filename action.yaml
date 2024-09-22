@@ -1,0 +1,77 @@
+name: Install VkBootstrap
+
+on:
+  workflow-dispatch:
+    inputs:
+      vulkan-version:
+        required: true
+        description: Version of the VulkanSDK to try to install.
+
+      vulkan-components:
+        required: false
+        default: Vulkan-Headers, Vulkan-Loader, Glslang
+        description: The components to install (Does nothing on linux)
+
+      vulkan-cache:
+        required: false
+        default: true
+        description: Whether or not to cache the VulkanSDK installation
+
+      cmake-configure-args:
+        required: false
+        default: ''
+        description: Additional arguments to pass to the CMake configure step for VkBootstrap
+
+      clone-dir:
+        required: false
+        default: ${{github.workspace}}/vkbootstrap
+        description: The directory to lone VkBootstrap into.
+
+      build-dir:
+        required: false
+        default: ${{github.workspace}}/vkbootstrap/build
+        description: The directory to build VkBootstrap into.
+
+      install-dir:
+        required: false
+        default: ${{github.workspace}}/install
+        description: The directory to install VkBootstrap into.
+
+runs:
+  using: 'composite'
+
+  steps:
+    - if: runner.os == 'Linux'
+      name: Install Linux Dependencies
+      shell: bash
+      run: |
+        sudo apt update
+        sudo apt install -y glibc-source libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev libwayland-dev libxkbcommon-dev libstdc++6
+
+    - if: runner.os == 'Linux'
+      name: Install VulkanSDK (Linux)
+      uses: humbletim/install-vulkan-sdk@v1.1.1
+      with:
+        version: ${{inputs.vulkan-version}}
+        cache: ${{inputs.vulkan-cache}}
+
+    - if: ${{ ! runner.os == 'Linux' }}
+      name: Install VulkanSDK (Others)
+      uses: humbletim/setup-vulkan-sdk@1.2.0
+      with: 
+        vulkan-install-version: ${{inputs.vulkan-version}}
+        vulkan-use-cache: ${{inputs.vulkan-cache}}
+        vulkan-components: ${{inputs.vulkan-components}}
+
+    - name: Clone VkBootstrap
+      uses: actions/checkout@v4.1.7
+      with:
+        repository: KhrySystem/VkBootstrap3
+        path: ${{inputs.clone-dir}}
+
+    - name: Build VkBootstrap
+      shell: bash
+      run: |
+        cmake -S ${{inputs.clone-dir}} -B ${{inputs.build-dir}} -DVKB_BUILD_TOOLS:BOOL=ON -DVKB_BUILD_EXAMPLES:BOOL=ON -DCMAKE_INSTALL_PREFIX:PATH=${{inputs.install-dir}} -DBUILD_SHARED_LIBS:BOOL=TRUE
+        cmake --build ${{inputs.build-dir}} --target install --config Release 
+
