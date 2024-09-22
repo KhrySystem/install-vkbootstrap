@@ -57,7 +57,7 @@ runs:
 
     - if: ${{ ! runner.os == 'Linux' }}
       name: Install VulkanSDK (Others)
-      uses: humbletim/setup-vulkan-sdk@1.2.0
+      uses: humbletim/setup-vulkan-sdk@v1.2.0
       with: 
         vulkan-install-version: ${{inputs.vulkan-version}}
         vulkan-use-cache: ${{inputs.vulkan-cache}}
